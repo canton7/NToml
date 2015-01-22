@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    internal class KeyValuePair
+    internal class FloatValue : ITableValue
     {
-        private readonly string key;
-        private readonly ITableValue value;
+        private readonly double value;
 
-        public KeyValuePair(string key, ITableValue value)
+        public FloatValue(double value)
         {
-            this.key = key;
             this.value = value;
         }
     }

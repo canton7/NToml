@@ -13,8 +13,11 @@ namespace Sandbox
     {
         static void Main(string[] args)
         {
-            string str = @"SomeKey = ""Some Value\t.\u00E9\"" \\ Yay!"" # This is a comment";
-            var result = Parser.KeyValuePair(new Input(str));
+            string str = @"[hello]
+this = ""is""
+a = true
+";
+            var result = TomlParser.ParseInput(str);
         }
     }
 }

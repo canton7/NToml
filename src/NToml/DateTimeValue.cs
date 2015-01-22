@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    internal class KeyValuePair
+    internal class DateTimeValue : ITableValue
     {
-        private readonly string key;
-        private readonly ITableValue value;
+        private readonly DateTime value;
 
-        public KeyValuePair(string key, ITableValue value)
+        public DateTimeValue(DateTime value)
         {
-            this.key = key;
             this.value = value;
         }
     }

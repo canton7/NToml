@@ -173,12 +173,19 @@ namespace NToml
         }
 
         static readonly Parser<ITableValue> ArrayValue =
-            ArrayOf(DateTime).Or<ITableValue>(ArrayOf(Integer)).Or(ArrayOf(Float)).Or(ArrayOf(Boolean)).Or(ArrayOf(StringValue));
+            ArrayOf(DateTime).Or<ITableValue>(ArrayOf(Integer)).Or(ArrayOf(Float)).Or(ArrayOf(Boolean))
+            .Or(ArrayOf(StringValue)).Or(ArrayOf(Parse.Ref(() => ArrayValue)));
 
         static readonly Parser<IEnumerable<string>> TableName =
             from open in Tokenize(Parse.Char('['), Whitespace)
             from content in Key.DelimitedBy(Tokenize(Parse.Char('.'), Whitespace))
             from close in Tokenize(Parse.Char(']'), Whitespace)
+            select content;
+
+        static readonly Parser<IEnumerable<string>> ArrayTableName =
+            from open in Tokenize(Parse.String("[["), Whitespace)
+            from content in Key.DelimitedBy(Tokenize(Parse.Char('.'), Whitespace))
+            from close in Tokenize(Parse.String("]]"), Whitespace)
             select content;
 
         static readonly Parser<ITableValue> TableValue =
@@ -208,21 +215,42 @@ namespace NToml
             from comment in Comment.Optional()
             from newline in Newline
             from lines in TableLines
-            select new Table(name.ToArray(), lines.ToArray());
+            select new Table(name.ToArray(), lines, false);
 
-        static readonly Parser<Table> FirstTable = TableLine.AtLeastOnce().Select(x => new Table(new string[0], x.Where(line => line != null).ToArray()));
+        static readonly Parser<Table> ArrayTable =
+            from name in ArrayTableName
+            from comment in Comment.Optional()
+            from newline in Newline
+            from lines in TableLines
+            select new Table(name.ToArray(), lines, true);
+
+        static readonly Parser<Table> AnyTable = Table.Or(ArrayTable);
+
+        static readonly Parser<Table> FirstTable =
+            TableLine.AtLeastOnce().Select(x => new Table(new string[0], x.Where(line => line != null), false));
 
         static readonly Parser<IEnumerable<Table>> Document =
-            from firstTable in FirstTable.Once().Optional()
-            from rest in Table.XMany().End()
-            select firstTable.IsEmpty ? rest : firstTable.Get().Concat(rest);
+            from firstTable in FirstTable.Optional()
+            from rest in AnyTable.XMany().End()
+            select new[] { firstTable.GetOrDefault() ?? new Table(new string[0], Enumerable.Empty<KeyValuePair>(), false) }.Concat(rest);
 
         public static object ParseInput(string input)
         {
-            return Document.Parse(input);
+            var tables = Document.Parse(input).ToArray();
+            var tableLookup = tables.ToDictionary(x => x.Title, x => x, new TableKeyComparer());
+
+            // Assign child tables to their parents
+            foreach (var table in tables)
+            {
+                Table parent;
+                if (table.Title.Length > 0 && tableLookup.TryGetValue(table.Title.Take(table.Title.Length - 1).ToArray(), out parent))
+                {
+                    parent.AddChildTable(table);
+                }
+            }
+
+            return tableLookup[new string[0]];
         }
-
-
 
     }
 }

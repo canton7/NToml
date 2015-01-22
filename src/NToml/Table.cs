@@ -9,12 +9,24 @@ namespace NToml
     internal class Table
     {
         private readonly string[] title;
-        private readonly KeyValuePair[] values;
+        private readonly List<KeyValuePair> values;
+        private readonly bool isArrayTable;
+        private readonly Dictionary<string[], Table> childTables = new Dictionary<string[], Table>();
 
-        public Table(string[] title, KeyValuePair[] values)
+        public string[] Title { get { return this.title; } }
+
+        public Table(string[] title, IEnumerable<KeyValuePair> values, bool isArrayTable)
         {
             this.title = title;
-            this.values = values;
+            this.values = new List<KeyValuePair>(values);
+            this.isArrayTable = isArrayTable;
+        }
+
+        public void AddChildTable(Table childTable)
+        {
+            if (!childTable.isArrayTable)
+                this.childTables.Add(childTable.Title, childTable);
+            // ELSE TODO
         }
     }
 }

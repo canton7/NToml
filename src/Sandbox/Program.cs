@@ -13,10 +13,12 @@ namespace Sandbox
     {
         static void Main(string[] args)
         {
-            string str = @"[hello]
-this = ""is""
-a = true
-";
+            string str = @"
+[hello]
+foo = 4
+
+[hello.""god""]
+bar = 4";
             var result = TomlParser.ParseInput(str);
         }
     }

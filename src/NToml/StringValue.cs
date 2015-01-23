@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    internal class StringValue : ITableValue
+    internal class StringValue : IValue
     {
         private readonly string value;
 
         public StringValue(string value)
         {
             this.value = value;
+        }
+
+        public void Visit(IValueVisitor visitor)
+        {
+            visitor.Deserialize(this.value);
         }
 
         public override string ToString()

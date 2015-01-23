@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    internal class TableValue : ITableValue
+    internal class TableValue : IValue
     {
         private readonly string[] fullName;
-        private readonly string name;
-        private readonly Dictionary<string, ITableValue> keyValuePairs = new Dictionary<string, ITableValue>();
+        private readonly Dictionary<string, IValue> keyValuePairs = new Dictionary<string, IValue>();
 
         // Temporary stoage for child tables - this is flattened into keyValuePairs on Finalize()
         private readonly List<Tuple<string, TableValue>> childArrayTables = new List<Tuple<string, TableValue>>();
@@ -19,7 +18,6 @@ namespace NToml
         public TableValue(string[] fullName, IEnumerable<KeyValuePair> initialKeyValuePairs = null)
         {
             this.fullName = fullName;
-            this.name = this.fullName.Length == 0 ? null : this.fullName[this.fullName.Length - 1];
             if (initialKeyValuePairs != null)
             {
                 foreach (var kvp in initialKeyValuePairs)
@@ -29,7 +27,7 @@ namespace NToml
             }
         }
 
-        public void AddKeyValuePair(string key, ITableValue value)
+        public void AddKeyValuePair(string key, IValue value)
         {
             if (this.keyValuePairs.ContainsKey(key))
                 throw new DuplicateTableKeyException(String.Join(".", this.fullName.Select(x => String.Format("\"{0}\"", x))), key);
@@ -55,6 +53,11 @@ namespace NToml
             }
 
             this.childArrayTables.Clear();
+        }
+
+        public void Visit(IValueVisitor visitor)
+        {
+            visitor.Deserialize(this.keyValuePairs);
         }
 
         public override string ToString()

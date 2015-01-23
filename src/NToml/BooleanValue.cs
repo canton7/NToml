@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    internal class BooleanValue : ITableValue
+    internal class BooleanValue : IValue
     {
         private readonly bool value;
 
         public BooleanValue(bool value)
         {
             this.value = value;
+        }
+
+        public void Visit(IValueVisitor visitor)
+        {
+            visitor.Deserialize(this.value);
         }
 
         public override string ToString()

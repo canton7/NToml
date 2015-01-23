@@ -9,9 +9,9 @@ namespace NToml
     internal class KeyValuePair
     {
         public string Key { get; private set; }
-        public ITableValue Value { get; private set; }
+        public IValue Value { get; private set; }
 
-        public KeyValuePair(string key, ITableValue value)
+        public KeyValuePair(string key, IValue value)
         {
             this.Key = key;
             this.Value = value;

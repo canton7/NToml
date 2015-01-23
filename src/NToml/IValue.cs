@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    internal interface ITableValue
+    public interface IValue
     {
+        void Visit(IValueVisitor visitor);
     }
 }

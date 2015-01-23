@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    internal class ArrayValue<T> : ITableValue where T : ITableValue
+    internal class ArrayValue<T> : IValue where T : IValue
     {
         private readonly T[] values;
 
         public ArrayValue(T[] values)
         {
             this.values = values;
+        }
+
+        public void Visit(IValueVisitor visitor)
+        {
+            visitor.Deserialize(this.values.Cast<IValue>());
         }
 
         public override string ToString()

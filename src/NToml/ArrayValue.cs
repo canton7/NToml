@@ -14,5 +14,10 @@ namespace NToml
         {
             this.values = values;
         }
+
+        public override string ToString()
+        {
+            return String.Format("[{0}]", String.Join(", ", values));
+        }
     }
 }

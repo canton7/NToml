@@ -14,5 +14,10 @@ namespace NToml
         {
             this.value = value;
         }
+
+        public override string ToString()
+        {
+            return this.value ? "true" : "false";
+        }
     }
 }

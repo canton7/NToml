@@ -8,13 +8,13 @@ namespace NToml
 {
     internal class KeyValuePair
     {
-        private readonly string key;
-        private readonly ITableValue value;
+        public string Key { get; private set; }
+        public ITableValue Value { get; private set; }
 
         public KeyValuePair(string key, ITableValue value)
         {
-            this.key = key;
-            this.value = value;
+            this.Key = key;
+            this.Value = value;
         }
     }
 }

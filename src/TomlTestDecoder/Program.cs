@@ -13,18 +13,8 @@ namespace TomlTestDecoder
             //var toml = Console.In.ReadToEnd();
 
             var toml = @"
-[[albums]]
-name = ""Born to Run""
-[[albums.songs]]
-name = ""Jungleland""
-[[albums.songs]]
-name = ""Meeting Across the River""
-[[albums]]
-name = ""Born in the USA""
 [[albums.songs]]
 name = ""Glory Days""
-[[albums.songs]]
-name = ""Dancing in the Dark""
 ";
 
             var parser = new TomlParser();

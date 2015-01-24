@@ -26,7 +26,7 @@ namespace NToml
         {
             var tables = TomlGrammar.Document.Parse(input).ToArray();
             var tableValueMap = tables.ToDictionary(x => x, x => new TableValue(x.Title, x.KeyValuePairs));
-            // The dictionary holds all non-array tables
+            // The dictionary holds all non-array tables, and most recently processed array table element
             var tableLookup = tableValueMap.Where(x => !x.Key.IsArrayTable)
                 .ToDictionary(x => x.Key.Title, x => new TableAndValue(x.Key, x.Value), new TableKeyComparer());
             // A list of all array tables
@@ -62,6 +62,9 @@ namespace NToml
             // Assign child tables to their parents
             foreach (var table in tables)
             {
+                if (table.IsArrayTable)
+                    tableLookup[table.Title] = new TableAndValue(table, tableValueMap[table]);
+
                 if (table.ParentTitle != null)
                     ensureTableDeclaredAndWiredInLookup(table);
 

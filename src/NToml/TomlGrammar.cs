@@ -63,44 +63,53 @@ namespace NToml
 
         static readonly Parser<char> ControlCharacter = Parse.Char(x => x <= 0x1F, "Unicode Control Characters");
 
-        static readonly Parser<char> BasicStringContent =
+        static readonly Parser<char> StringContent =
             EscapedBackspace.Or(EscapedTab).Or(EscapedLinefeed).Or(EscapedFormFeed).Or(EscapedCarriageReturn).Or(EscapedQuote)
             .Or(EscapedBackslash).Or(HexChars).Or(ShortUnicode).Or(LongUnicode)
-            .Or(Parse.AnyChar.Except(ControlCharacter).Except(Parse.Char('\\')).Except(BasicStringDelimeter));
+            .Or(Parse.AnyChar.Except(ControlCharacter));
 
-        static readonly Parser<string> BasicString =
+        static readonly Parser<char> SingleLineBasicStringContent =
+            StringContent.Except(Parse.Char('\\')).Except(BasicStringDelimeter);
+
+        static readonly Parser<string> SingleLineBasicString =
             from open in BasicStringDelimeter
-            from content in BasicStringContent.Many().Text()
+            from content in SingleLineBasicStringContent.Many().Text()
             from close in BasicStringDelimeter
             select content;
 
-        static readonly Parser<string> MultilineStringDelimeter = BasicStringDelimeter.Repeat(3).Text();
-        // Try and match newline first, as it gets normalized to \n
-        static readonly Parser<char> MultilineStringContent = Newline.Or(Parse.AnyChar.Except(MultilineStringDelimeter));
-        static readonly Parser<string> MultilineString =
-            from open in MultilineStringDelimeter
-            from firstNewline in Newline.Optional()
-            from content in MultilineStringContent.Many().Text()
-            from close in MultilineStringDelimeter
-            select content;
+        static readonly Parser<string> MultilineBasicStringDelimeter = BasicStringDelimeter.Repeat(3).Text();
+        static readonly Parser<IEnumerable<char>> MultilineBasicStringNewlineEscape =
+            from backslash in Parse.Char('\\')
+            from rest in WhitespaceOrNewline.Many()
+            select Enumerable.Empty<char>();
 
-        static readonly Parser<char> LiteralStringContent =
+        // Try and match newline first, as it gets normalized to \n
+        static readonly Parser<char> MultilineBasicStringContent =
+            Newline.Or(Parse.AnyChar.Except(MultilineBasicStringDelimeter).Except(MultilineBasicStringNewlineEscape));
+        static readonly Parser<string> MultilineBasicString =
+            from open in MultilineBasicStringDelimeter
+            from firstNewline in MultilineBasicStringNewlineEscape.Or(Newline.Once()).Or(Parse.Return(Enumerable.Empty<char>()))
+            from content in (MultilineBasicStringNewlineEscape.Text().Or(MultilineBasicStringContent.Many().Text())).Many()
+            from close in MultilineBasicStringDelimeter
+            select String.Join("", content);
+
+        static readonly Parser<char> SingleLineLiteralStringContent =
             Parse.AnyChar.Except(LiteralStringDelimeter).Except(Newline);
 
-        static readonly Parser<string> LiteralString =
+        static readonly Parser<string> SingleLineLiteralString =
             from open in LiteralStringDelimeter
-            from content in LiteralStringContent.Many().Text()
+            from content in SingleLineLiteralStringContent.Many().Text()
             from close in LiteralStringDelimeter
             select content;
 
-        static readonly Parser<string> LiteralMultilineStringDelimeter = LiteralStringDelimeter.Repeat(3).Text();
+        static readonly Parser<string> MultilineLiteralStringDelimeter = LiteralStringDelimeter.Repeat(3).Text();
         // Try and match newline first, as it gets normalized to \n
-        static readonly Parser<char> LiteralMultilineStringContent = Newline.Or(Parse.AnyChar.Except(LiteralMultilineStringDelimeter));
-        static readonly Parser<string> LiteralMultilineString =
-            from open in LiteralMultilineStringDelimeter
+        static readonly Parser<char> MultilineLiteralStringContent = Newline.Or(Parse.AnyChar.Except(MultilineLiteralStringDelimeter));
+        static readonly Parser<string> MultilineLiteralString =
+            from open in MultilineLiteralStringDelimeter
             from firstNewline in Newline.Optional()
-            from content in LiteralMultilineStringContent.Many().Text()
-            from close in LiteralMultilineStringDelimeter
+            from content in MultilineLiteralStringContent.Many().Text()
+            from close in MultilineLiteralStringDelimeter
             select content;
 
         static readonly Parser<IntegerValue> Integer =
@@ -135,13 +144,13 @@ namespace NToml
 
         static readonly Parser<char> BareKeyChars = Parse.Chars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-").Named("a-zA-Z_-");
         static readonly Parser<string> BareKey = BareKeyChars.AtLeastOnce().Text();
-        static readonly Parser<string> QuotedKey = BasicString;
+        static readonly Parser<string> QuotedKey = SingleLineBasicString;
         static readonly Parser<string> Key = BareKey.Or(QuotedKey);
 
         // Multi-line variants have to go before single-line variants, or the opening """/''' gets incorrectly parsed as a string in its own right
         // We have to allow zero-length strings, so we can't insist that all strings contain content
         static readonly Parser<StringValue> StringValue =
-            MultilineString.Or(BasicString).Or(LiteralMultilineString).Or(LiteralString).Select(x => new StringValue(x));
+            MultilineBasicString.Or(SingleLineBasicString).Or(MultilineLiteralString).Or(SingleLineLiteralString).Select(x => new StringValue(x));
 
         static readonly Parser<DateTimeValue> DateTime =
             Rfc3339Parser.Rfc3339.Select(x => new DateTimeValue(x));
@@ -155,21 +164,25 @@ namespace NToml
         static Parser<ArrayValue<T>> ArrayOf<T>(Parser<T> elementType) where T : IValue
         {
             return from open in Parse.Char('[')
-                   from comment1 in Comment.Optional()
-                   from first in Tokenize(elementType.Once(), WhitespaceOrNewline)
-                   from rest in
-                       (
-                        from comment2 in Comment.Optional()
-                        from comma in Tokenize(Parse.Char(','), WhitespaceOrNewline)
-                        from comment3 in Comment.Optional()
-                        from element in Tokenize(elementType, WhitespaceOrNewline)
-                        select element
-                       ).Many()
-                   from comment4 in Comment.Optional()
-                   from trailingComma in Tokenize(Parse.Char(','), WhitespaceOrNewline).Optional()
-                   from comment5 in Comment.Optional()
-                   from close in Tokenize(Parse.Char(']'), WhitespaceOrNewline)
-                   select new ArrayValue<T>(first.Concat(rest).ToArray());
+                   from comment1 in Tokenize(Comment, Newline).Many()
+                   from items in
+                   (
+                       from first in Tokenize(elementType.Once(), WhitespaceOrNewline)
+                       from rest in
+                           (
+                            from comment2 in Tokenize(Comment, Newline).Many()
+                            from comma in Tokenize(Parse.Char(','), WhitespaceOrNewline)
+                            from comment3 in Tokenize(Comment, Newline).Many()
+                            from element in Tokenize(elementType, WhitespaceOrNewline)
+                            select element
+                           ).Many()
+                       from comment4 in Tokenize(Comment, Newline).Many()
+                       from trailingComma in Tokenize(Parse.Char(','), WhitespaceOrNewline).Optional()
+                       from comment5 in Tokenize(Comment, Newline).Many()
+                       select new ArrayValue<T>(first.Concat(rest).ToArray())
+                   ).Optional()
+                   from close in TokenizeBefore(Parse.Char(']'), WhitespaceOrNewline)
+                   select items.GetOrElse(new ArrayValue<T>(new T[0]));
         }
 
         static readonly Parser<IValue> ArrayValue =
@@ -190,6 +203,7 @@ namespace NToml
 
         static readonly Parser<IValue> TableValue =
             from value in DateTime.Or<IValue>(Float).Or(Integer).Or(Boolean).Or(StringValue).Or(ArrayValue)
+            from trailingWhitespace in Whitespace.Many()
             from rest in Comment.Optional()
             select value;
 

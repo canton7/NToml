@@ -21,7 +21,7 @@ namespace TomlTestDecoder
             });
             rootTable.Visit(visitor);
 
-            this.Value = JsonConvert.SerializeObject(retVal);
+            this.Value = JsonConvert.SerializeObject(retVal, Formatting.Indented);
         }
     }
 }

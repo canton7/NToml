@@ -52,7 +52,7 @@ namespace TomlTestDecoder
 
         public void Deserialize(DateTime value)
         {
-            this.callback(createValue("datetime", value.ToString("o")));
+            this.callback(createValue("datetime", value.ToString("yyyy-MM-dd'T'HH:mm:ssZ")));
         }
 
         public void Deserialize(double value)

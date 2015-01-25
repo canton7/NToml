@@ -1,4 +1,6 @@
-﻿using Sprache;
+﻿using NToml.Grammars;
+using NToml.Values;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    public class TomlParser
+    public static class TomlParser
     {
         private struct TableAndValue
         {
@@ -22,7 +24,7 @@ namespace NToml
             }
         }
 
-        public void ParseInput(string input, IDeserializer deserializer)
+        public static void ParseInput(string input, IDeserializer deserializer)
         {
             var tables = TomlGrammar.Document.Parse(input).ToArray();
             var tableValueMap = tables.ToDictionary(x => x, x => new TableValue(x.Title, x.KeyValuePairs));

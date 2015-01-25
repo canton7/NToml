@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NToml
+namespace NToml.Values
 {
-    internal class BooleanValue : IValue
+    internal class StringValue : IValue
     {
-        private readonly bool value;
+        private readonly string value;
         public TomlValueType Type
         {
-            get { return TomlValueType.Boolean; }
+            get { return TomlValueType.String; }
         }
 
-        public BooleanValue(bool value)
+        public StringValue(string value)
         {
             this.value = value;
         }
@@ -26,7 +26,7 @@ namespace NToml
 
         public override string ToString()
         {
-            return this.value ? "true" : "false";
+            return String.Format("\"{0}\"", this.value);
         }
     }
 }

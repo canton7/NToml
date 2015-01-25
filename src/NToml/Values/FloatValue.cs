@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NToml
+namespace NToml.Values
 {
-    internal class StringValue : IValue
+    internal class FloatValue : IValue
     {
-        private readonly string value;
+        private readonly double value;
         public TomlValueType Type
         {
-            get { return TomlValueType.String; }
+            get { return TomlValueType.Float; }
         }
 
-        public StringValue(string value)
+        public FloatValue(double value)
         {
             this.value = value;
         }
@@ -26,7 +26,7 @@ namespace NToml
 
         public override string ToString()
         {
-            return String.Format("\"{0}\"", this.value);
+            return this.value.ToString();
         }
     }
 }

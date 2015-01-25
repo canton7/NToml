@@ -17,12 +17,10 @@ namespace TomlTestDecoder
 name = ""Glory Days""
 ";
 
-            var parser = new TomlParser();
-
             try
             {
                 var deserializer = new TestDeserializer();
-                parser.ParseInput(toml, deserializer);
+                TomlParser.ParseInput(toml, deserializer);
                 Console.Write(deserializer.Value);
                 Environment.Exit(0);
             }

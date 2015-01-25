@@ -42,25 +42,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrayValue.cs" />
-    <Compile Include="BooleanValue.cs" />
-    <Compile Include="DateTimeValue.cs" />
+    <Compile Include="Dynamic\DynamicVisitor.cs" />
+    <Compile Include="TomlConvert.cs" />
+    <Compile Include="Values\ArrayValue.cs" />
+    <Compile Include="Values\BooleanValue.cs" />
+    <Compile Include="Values\DateTimeValue.cs" />
     <Compile Include="DuplicateTableKeyException.cs" />
-    <Compile Include="FloatValue.cs" />
+    <Compile Include="Dynamic\DynamicDeserializer.cs" />
+    <Compile Include="Values\FloatValue.cs" />
     <Compile Include="IDeserializer.cs" />
-    <Compile Include="IntegerValue.cs" />
-    <Compile Include="IValue.cs" />
-    <Compile Include="IValueVisitor.cs" />
+    <Compile Include="Values\IntegerValue.cs" />
+    <Compile Include="Values\IValue.cs" />
+    <Compile Include="Values\IValueVisitor.cs" />
     <Compile Include="KeyValuePair.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="TableKeyComparer.cs" />
-    <Compile Include="TableValue.cs" />
-    <Compile Include="TomlGrammar.cs" />
+    <Compile Include="Values\TableValue.cs" />
+    <Compile Include="Grammars\TomlGrammar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rfc3339Parser.cs" />
-    <Compile Include="StringValue.cs" />
+    <Compile Include="Grammars\Rfc3339Parser.cs" />
+    <Compile Include="Values\StringValue.cs" />
     <Compile Include="TomlParser.cs" />
-    <Compile Include="TomlValueType.cs" />
+    <Compile Include="Values\TomlValueType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

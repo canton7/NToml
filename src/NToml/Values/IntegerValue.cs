@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NToml
+namespace NToml.Values
 {
-    internal class DateTimeValue : IValue
+    internal class IntegerValue : IValue
     {
-        private readonly DateTime value;
+        private readonly long value;
         public TomlValueType Type
         {
-            get { return TomlValueType.DateTime; }
+            get { return TomlValueType.Integer; }
         }
 
-        public DateTimeValue(DateTime value)
+        public IntegerValue(long value)
         {
             this.value = value;
         }

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NToml
+namespace NToml.Grammars
 {
-    public static class Rfc3339Parser
+    public static class Rfc3339Grammar
     {
         // http://tools.ietf.org/html/rfc3339#section-5.6
 

@@ -1,11 +1,12 @@
-﻿using Sprache;
+﻿using NToml.Values;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NToml
+namespace NToml.Grammars
 {
     internal class TomlGrammar
     {
@@ -66,10 +67,10 @@ namespace NToml
         static readonly Parser<char> StringContent =
             EscapedBackspace.Or(EscapedTab).Or(EscapedLinefeed).Or(EscapedFormFeed).Or(EscapedCarriageReturn).Or(EscapedQuote)
             .Or(EscapedBackslash).Or(HexChars).Or(ShortUnicode).Or(LongUnicode)
-            .Or(Parse.AnyChar.Except(ControlCharacter));
+            .Or(Parse.AnyChar.Except(ControlCharacter).Except(Parse.Char('\\')));
 
         static readonly Parser<char> SingleLineBasicStringContent =
-            StringContent.Except(Parse.Char('\\')).Except(BasicStringDelimeter);
+            StringContent.Except(BasicStringDelimeter);
 
         static readonly Parser<string> SingleLineBasicString =
             from open in BasicStringDelimeter
@@ -77,15 +78,19 @@ namespace NToml
             from close in BasicStringDelimeter
             select content;
 
-        static readonly Parser<string> MultilineBasicStringDelimeter = BasicStringDelimeter.Repeat(3).Text();
+        static readonly Parser<string> MultilineBasicStringDelimeter =
+            BasicStringDelimeter.Repeat(3).Text();
         static readonly Parser<IEnumerable<char>> MultilineBasicStringNewlineEscape =
             from backslash in Parse.Char('\\')
+            // Force a newline in there - otherwise 'a \ b' is allowed
+            from tailingSpace in Whitespace.Many()
+            from newline in Newline
             from rest in WhitespaceOrNewline.Many()
             select Enumerable.Empty<char>();
 
         // Try and match newline first, as it gets normalized to \n
         static readonly Parser<char> MultilineBasicStringContent =
-            Newline.Or(Parse.AnyChar.Except(MultilineBasicStringDelimeter).Except(MultilineBasicStringNewlineEscape));
+            Newline.Or(StringContent.Except(MultilineBasicStringDelimeter).Except(MultilineBasicStringNewlineEscape));
         static readonly Parser<string> MultilineBasicString =
             from open in MultilineBasicStringDelimeter
             from firstNewline in MultilineBasicStringNewlineEscape.Or(Newline.Once()).Or(Parse.Return(Enumerable.Empty<char>()))
@@ -153,7 +158,7 @@ namespace NToml
             MultilineBasicString.Or(SingleLineBasicString).Or(MultilineLiteralString).Or(SingleLineLiteralString).Select(x => new StringValue(x));
 
         static readonly Parser<DateTimeValue> DateTime =
-            Rfc3339Parser.Rfc3339.Select(x => new DateTimeValue(x));
+            Rfc3339Grammar.Rfc3339.Select(x => new DateTimeValue(x));
 
         static readonly Parser<char> CommentChar = Parse.Char('#');
         static readonly Parser<string> Comment =

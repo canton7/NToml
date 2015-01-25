@@ -38,11 +38,21 @@ namespace TomlTestDecoder
                 value.Visit(visitor);
             }
 
-            this.callback(new Dictionary<string, object>()
+            // Now. Because toml-test is stupid, arrays of tables are different to arrays
+            // of anything else...
+            var first = values.FirstOrDefault();
+            if (first != null && first.Type == TomlValueType.Table)
             {
-                { "type", "array" },
-                { "value", valueItems },
-            });
+                this.callback(valueItems);
+            }
+            else
+            {
+                this.callback(new Dictionary<string, object>()
+                {
+                    { "type", "array" },
+                    { "value", valueItems },
+                });
+            }
         }
 
         public void Deserialize(bool value)

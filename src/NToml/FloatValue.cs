@@ -9,6 +9,10 @@ namespace NToml
     internal class FloatValue : IValue
     {
         private readonly double value;
+        public TomlValueType Type
+        {
+            get { return TomlValueType.Float; }
+        }
 
         public FloatValue(double value)
         {

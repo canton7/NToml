@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    public interface IValue
+    public enum TomlValueType
     {
-        TomlValueType Type { get; }
-        void Visit(IValueVisitor visitor);
+        Array,
+        Boolean,
+        DateTime,
+        Float,
+        Integer,
+        String,
+        Table
     }
 }

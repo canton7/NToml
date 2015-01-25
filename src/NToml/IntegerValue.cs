@@ -9,6 +9,10 @@ namespace NToml
     internal class IntegerValue : IValue
     {
         private readonly long value;
+        public TomlValueType Type
+        {
+            get { return TomlValueType.Integer; }
+        }
 
         public IntegerValue(long value)
         {

@@ -9,6 +9,10 @@ namespace NToml
     internal class DateTimeValue : IValue
     {
         private readonly DateTime value;
+        public TomlValueType Type
+        {
+            get { return TomlValueType.DateTime; }
+        }
 
         public DateTimeValue(DateTime value)
         {

@@ -9,6 +9,10 @@ namespace NToml
     internal class BooleanValue : IValue
     {
         private readonly bool value;
+        public TomlValueType Type
+        {
+            get { return TomlValueType.Boolean; }
+        }
 
         public BooleanValue(bool value)
         {

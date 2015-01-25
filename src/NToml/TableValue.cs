@@ -12,8 +12,13 @@ namespace NToml
         private readonly string[] fullName;
         private readonly Dictionary<string, IValue> keyValuePairs = new Dictionary<string, IValue>();
 
-        // Temporary stoage for child tables - this is flattened into keyValuePairs on Finalize()
+        // Temporary stoage for child tables - this is flattened into keyValuePairs on FlattenChildArrayTables()
         private readonly List<Tuple<string, TableValue>> childArrayTables = new List<Tuple<string, TableValue>>();
+
+        public TomlValueType Type
+        {
+            get { return TomlValueType.Table; }
+        }
 
         public TableValue(string[] fullName, IEnumerable<KeyValuePair> initialKeyValuePairs = null)
         {

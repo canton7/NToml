@@ -60,6 +60,7 @@
     <Compile Include="Rfc3339Parser.cs" />
     <Compile Include="StringValue.cs" />
     <Compile Include="TomlParser.cs" />
+    <Compile Include="TomlValueType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

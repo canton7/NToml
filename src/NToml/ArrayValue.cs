@@ -9,6 +9,10 @@ namespace NToml
     internal class ArrayValue<T> : IValue where T : IValue
     {
         private readonly T[] values;
+        public TomlValueType Type
+        {
+            get { return TomlValueType.Array; }
+        }
 
         public ArrayValue(T[] values)
         {

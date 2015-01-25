@@ -9,6 +9,10 @@ namespace NToml
     internal class StringValue : IValue
     {
         private readonly string value;
+        public TomlValueType Type
+        {
+            get { return TomlValueType.String; }
+        }
 
         public StringValue(string value)
         {

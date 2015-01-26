@@ -1,3 +1,3 @@
 [submodule "src/NTomlUnitTests/toml-test"]
 	path = src/NTomlUnitTests/toml-test
-	url = git://github.com/BurntSushi/toml-test.git
+	url = git@github.com:canton7/toml-test.git

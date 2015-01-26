@@ -237,9 +237,13 @@ namespace NToml.Grammars
         static readonly Parser<Table> Table =
             from name in TableName
             from comment in Comment.Optional()
-            from newline in Newline
-            from lines in TableLines
-            select new Table(name.ToArray(), lines, false);
+            from lines in
+            (
+                from newline in Newline
+                from lines in TableLines
+                select lines
+            ).Optional()
+            select new Table(name.ToArray(), lines.GetOrElse(Enumerable.Empty<KeyValuePair>()), false);
 
         static readonly Parser<Table> ArrayTable =
             from name in ArrayTableName

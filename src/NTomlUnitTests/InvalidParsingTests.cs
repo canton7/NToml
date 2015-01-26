@@ -177,6 +177,14 @@ neganswer = -1.";
 
 
 	[Fact]
+	public void KeySpace()
+	{
+		var inputString = @"a b = 1";
+		AssertHelpers.ThrowsDerived<ParseException>(() => TestDeserializer.Deserialize(inputString));
+	}
+
+
+	[Fact]
 	public void KeyStartBracket()
 	{
 		var inputString = @"[a]
@@ -287,6 +295,23 @@ zyx = 42";
 	{
 		var inputString = @"[a[b]
 zyx = 42";
+		AssertHelpers.ThrowsDerived<ParseException>(() => TestDeserializer.Deserialize(inputString));
+	}
+
+
+	[Fact]
+	public void TableWhitespace()
+	{
+		var inputString = @"[invalid key]";
+		AssertHelpers.ThrowsDerived<ParseException>(() => TestDeserializer.Deserialize(inputString));
+	}
+
+
+	[Fact]
+	public void TableWithPound()
+	{
+		var inputString = @"[key#group]
+answer = 42";
 		AssertHelpers.ThrowsDerived<ParseException>(() => TestDeserializer.Deserialize(inputString));
 	}
 

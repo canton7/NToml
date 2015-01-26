@@ -33,8 +33,13 @@ namespace NToml
             var tables = result.Value;
             var tableValueMap = tables.ToDictionary(x => x, x => new TableValue(x.Title, x.KeyValuePairs));
             // The dictionary holds all non-array tables, and most recently processed array table element
-            var tableLookup = tableValueMap.Where(x => !x.Key.IsArrayTable)
-                .ToDictionary(x => x.Key.Title, x => new TableAndValue(x.Key, x.Value), new TableKeyComparer());
+            var tableLookup = new Dictionary<string[], TableAndValue>(new TableKeyComparer());
+            foreach (var item in tableValueMap.Where(x => !x.Key.IsArrayTable))
+            {
+                if (tableLookup.ContainsKey(item.Key.Title))
+                    throw new DuplicateTableKeyException(item.Key.ParentTitle, item.Key.ActualTitle);
+                tableLookup.Add(item.Key.Title, new TableAndValue(item.Key, item.Value));
+            }
             // A list of all array tables
             var arrayTableTitles = new HashSet<string[]>(tables.Where(x => x.IsArrayTable).Select(x => x.Title), new TableKeyComparer());
 

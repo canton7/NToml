@@ -377,7 +377,7 @@ neganswer = -42";
 	[Fact]
 	public void KeySpace()
 	{
-		var inputString = @"   a b    = 1";
+		var inputString = @"""a b"" = 1";
 		var expectedOutputString = @"{
     ""a b"": {""type"": ""integer"", ""value"": ""1""}
 }";
@@ -390,9 +390,9 @@ neganswer = -42";
 	[Fact]
 	public void KeySpecialChars()
 	{
-		var inputString = @"~!@$^&*()_+-`1234567890[]\|/?><.,;:' = 1";
+		var inputString = @"""~!@$^&*()_+-`1234567890[]|/?><.,;:'"" = 1";
 		var expectedOutputString = @"{
-    ""~!@$^&*()_+-`1234567890[]\\|/?><.,;:'"": {
+    ""~!@$^&*()_+-`1234567890[]|/?><.,;:'"": {
         ""type"": ""integer"", ""value"": ""1""
     }
 }";
@@ -435,55 +435,55 @@ neganswer = -9223372036854775808";
 	[Fact]
 	public void MultilineString()
 	{
-		var inputString = @"multiline empty one = """"""""""""
-multiline empty two = """"""
+		var inputString = @"multiline_empty_one = """"""""""""
+multiline_empty_two = """"""
 """"""
-multiline empty three = """"""\
+multiline_empty_three = """"""\
     """"""
-multiline empty four = """"""\
+multiline_empty_four = """"""\
    \
    \
    """"""
 
-equivalent one = ""The quick brown fox jumps over the lazy dog.""
-equivalent two = """"""
+equivalent_one = ""The quick brown fox jumps over the lazy dog.""
+equivalent_two = """"""
 The quick brown \
 
 
   fox jumps over \
     the lazy dog.""""""
 
-equivalent three = """"""\
+equivalent_three = """"""\
        The quick brown \
        fox jumps over \
        the lazy dog.\
        """"""";
 		var expectedOutputString = @"{
-    ""multiline empty one"": {
+    ""multiline_empty_one"": {
         ""type"": ""string"",
         ""value"": """"
     },
-    ""multiline empty two"": {
+    ""multiline_empty_two"": {
         ""type"": ""string"",
         ""value"": """"
     },
-    ""multiline empty three"": {
+    ""multiline_empty_three"": {
         ""type"": ""string"",
         ""value"": """"
     },
-    ""multiline empty four"": {
+    ""multiline_empty_four"": {
         ""type"": ""string"",
         ""value"": """"
     },
-    ""equivalent one"": {
+    ""equivalent_one"": {
         ""type"": ""string"",
         ""value"": ""The quick brown fox jumps over the lazy dog.""
     },
-    ""equivalent two"": {
+    ""equivalent_two"": {
         ""type"": ""string"",
         ""value"": ""The quick brown fox jumps over the lazy dog.""
     },
-    ""equivalent three"": {
+    ""equivalent_three"": {
         ""type"": ""string"",
         ""value"": ""The quick brown fox jumps over the lazy dog.""
     }
@@ -597,7 +597,6 @@ newline = ""This string has a \n new line character.""
 formfeed = ""This string has a \f form feed character.""
 carriage = ""This string has a \r carriage return character.""
 quote = ""This string has a \"" quote character.""
-slash = ""This string has a \/ slash character.""
 backslash = ""This string has a \\ backslash character.""
 notunicode1 = ""This string does not have a unicode \\u escape.""
 notunicode2 = ""This string does not have a unicode \u005Cu escape.""
@@ -627,10 +626,6 @@ notunicode4 = ""This string does not have a unicode \\\u0075 escape.""";
     ""quote"": {
         ""type"": ""string"",
         ""value"": ""This string has a \u0022 quote character.""
-    },
-    ""slash"": {
-        ""type"": ""string"",
-        ""value"": ""This string has a \u002F slash character.""
     },
     ""backslash"": {
         ""type"": ""string"",
@@ -841,7 +836,7 @@ last_name = ""Springsteen""";
 	[Fact]
 	public void TableWhitespace()
 	{
-		var inputString = @"[valid key]";
+		var inputString = @"[""valid key""]";
 		var expectedOutputString = @"{
     ""valid key"": {}
 }";
@@ -854,7 +849,7 @@ last_name = ""Springsteen""";
 	[Fact]
 	public void TableWithPound()
 	{
-		var inputString = @"[key#group]
+		var inputString = @"[""key#group""]
 answer = 42";
 		var expectedOutputString = @"{
     ""key#group"": {

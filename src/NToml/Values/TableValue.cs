@@ -35,7 +35,7 @@ namespace NToml.Values
         public void AddKeyValuePair(string key, IValue value)
         {
             if (this.keyValuePairs.ContainsKey(key))
-                throw new DuplicateTableKeyException(String.Join(".", this.fullName.Select(x => String.Format("\"{0}\"", x))), key);
+                throw new DuplicateTableKeyException(this.fullName, key);
             this.keyValuePairs.Add(key, value);
         }
 

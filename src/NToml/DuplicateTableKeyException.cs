@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NToml
 {
-    public class DuplicateTableKeyException : Exception
+    public class DuplicateTableKeyException : ParseException
     {
         public string TableName { get; private set; }
         public string KeyName { get; private set; }

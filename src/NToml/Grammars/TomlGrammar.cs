@@ -2,6 +2,7 @@
 using Sprache;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +45,10 @@ namespace NToml.Grammars
                    select item;
         }
 
+        static char ParseUnicodeHexChars(string hexChars)
+        {
+            return Convert.ToChar(Int64.Parse(hexChars, NumberStyles.HexNumber));
+        }
 
         static readonly Parser<char> EscapedBackspace = Escaped(Parse.Char('b')).Return('\u0008');
         static readonly Parser<char> EscapedTab = Escaped(Parse.Char('t')).Return('\t');
@@ -55,12 +60,12 @@ namespace NToml.Grammars
         static readonly Parser<char> HexChars = Parse.Chars("0123456789abcdefABCDEF");
         static readonly Parser<char> ShortUnicode =
             from u in Escaped(Parse.Char('u'))
-            from rest in HexChars.Repeat(4)
-            select 'T'; // TODO
+            from rest in HexChars.Repeat(4).Text()
+            select ParseUnicodeHexChars(rest);
         static readonly Parser<char> LongUnicode =
             from u in Escaped(Parse.Char('U'))
-            from rest in HexChars.Repeat(8)
-            select 'U'; // TODO
+            from rest in HexChars.Repeat(8).Text()
+            select ParseUnicodeHexChars(rest);
 
         static readonly Parser<char> ControlCharacter = Parse.Char(x => x <= 0x1F, "Unicode Control Characters");
 

@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dynamic\DynamicVisitor.cs" />
+    <Compile Include="GrammarException.cs" />
+    <Compile Include="ParseException.cs" />
     <Compile Include="TomlConvert.cs" />
     <Compile Include="Values\ArrayValue.cs" />
     <Compile Include="Values\BooleanValue.cs" />

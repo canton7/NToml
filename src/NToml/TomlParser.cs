@@ -26,7 +26,11 @@ namespace NToml
 
         public static void ParseInput(string input, IDeserializer deserializer)
         {
-            var tables = TomlGrammar.Document.Parse(input).ToArray();
+            var result = TomlGrammar.Document.TryParse(input);
+            if (!result.WasSuccessful)
+                throw new GrammarException(result.Message);
+
+            var tables = result.Value;
             var tableValueMap = tables.ToDictionary(x => x, x => new TableValue(x.Title, x.KeyValuePairs));
             // The dictionary holds all non-array tables, and most recently processed array table element
             var tableLookup = tableValueMap.Where(x => !x.Key.IsArrayTable)
@@ -44,7 +48,7 @@ namespace NToml
                 if (!tableLookup.TryGetValue(table.ParentTitle, out parent))
                 {
                     if (arrayTableTitles.Contains(table.ParentTitle))
-                        throw new Exception("Whoops"); // TODO better message
+                        throw new ParseException("Whoops"); // TODO better message
 
                     var parentTable = new Table(table.ParentTitle, Enumerable.Empty<KeyValuePair>(), false);
                     parent = new TableAndValue(parentTable, new TableValue(parentTable.Title));

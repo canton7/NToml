@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Sandbox
@@ -13,6 +14,9 @@ namespace Sandbox
     {
         static void Main(string[] args)
         {
+            var fileName = "one-two";
+            Regex.Replace(fileName, "-(.)", match => match.Captures[1].Value.ToUpper());
+
             string str = @"
 [the]
 test_string = ""You'll hate me after this - #"" # "" Annoying, isn't it?

@@ -4,14 +4,16 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using NTomlUnitTests;
 
-public class ValidParsingTests
+namespace NTomlUnitTests
 {
-
-	[Fact]
-	public void ArrayEmpty()
+	public class ValidParsingTests
 	{
-		var inputString = @"thevoid = [[[[[]]]]]";
-		var expectedOutputString = @"{
+
+		[Fact]
+		public void ArrayEmpty()
+		{
+			var inputString = @"thevoid = [[[[[]]]]]";
+			var expectedOutputString = @"{
     ""thevoid"": { ""type"": ""array"", ""value"": [
         {""type"": ""array"", ""value"": [
             {""type"": ""array"", ""value"": [
@@ -22,17 +24,16 @@ public class ValidParsingTests
         ]}
     ]}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void ArrayNospaces()
-	{
-		var inputString = @"ints = [1,2,3]";
-		var expectedOutputString = @"{
+		[Fact]
+		public void ArrayNospaces()
+		{
+			var inputString = @"ints = [1,2,3]";
+			var expectedOutputString = @"{
     ""ints"": {
         ""type"": ""array"",
         ""value"": [
@@ -42,17 +43,16 @@ public class ValidParsingTests
         ]
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void ArraysHetergeneous()
-	{
-		var inputString = @"mixed = [[1, 2], [""a"", ""b""], [1.1, 2.1]]";
-		var expectedOutputString = @"{
+		[Fact]
+		public void ArraysHetergeneous()
+		{
+			var inputString = @"mixed = [[1, 2], [""a"", ""b""], [1.1, 2.1]]";
+			var expectedOutputString = @"{
     ""mixed"": {
         ""type"": ""array"",
         ""value"": [
@@ -71,17 +71,16 @@ public class ValidParsingTests
         ]
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void ArraysNested()
-	{
-		var inputString = @"nest = [[""a""], [""b""]]";
-		var expectedOutputString = @"{
+		[Fact]
+		public void ArraysNested()
+		{
+			var inputString = @"nest = [[""a""], [""b""]]";
+			var expectedOutputString = @"{
     ""nest"": {
         ""type"": ""array"",
         ""value"": [
@@ -94,16 +93,15 @@ public class ValidParsingTests
         ]
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void Arrays()
-	{
-		var inputString = @"ints = [1, 2, 3]
+		[Fact]
+		public void Arrays()
+		{
+			var inputString = @"ints = [1, 2, 3]
 floats = [1.1, 2.1, 3.1]
 strings = [""a"", ""b"", ""c""]
 dates = [
@@ -111,7 +109,7 @@ dates = [
   1979-05-27T07:32:00Z,
   2006-06-01T11:00:00Z,
 ]";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""ints"": {
         ""type"": ""array"",
         ""value"": [
@@ -145,31 +143,29 @@ dates = [
         ]
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void Bool()
-	{
-		var inputString = @"t = true
+		[Fact]
+		public void Bool()
+		{
+			var inputString = @"t = true
 f = false";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""f"": {""type"": ""bool"", ""value"": ""false""},
     ""t"": {""type"": ""bool"", ""value"": ""true""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void CommentsEverywhere()
-	{
-		var inputString = @"# Top comment.
+		[Fact]
+		public void CommentsEverywhere()
+		{
+			var inputString = @"# Top comment.
   # Top comment.
 # Top comment.
 
@@ -193,7 +189,7 @@ more = [ # Comment
 # Evil.
 # ] Did I fool you?
 ] # Hopefully not.";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""group"": {
         ""answer"": {""type"": ""integer"", ""value"": ""42""},
         ""more"": {
@@ -205,45 +201,42 @@ more = [ # Comment
         }
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void Datetime()
-	{
-		var inputString = @"bestdayever = 1987-07-05T17:45:00Z";
-		var expectedOutputString = @"{
+		[Fact]
+		public void Datetime()
+		{
+			var inputString = @"bestdayever = 1987-07-05T17:45:00Z";
+			var expectedOutputString = @"{
     ""bestdayever"": {""type"": ""datetime"", ""value"": ""1987-07-05T17:45:00Z""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
+		[Fact]
+		public void Empty()
+		{
+			var inputString = @"";
+			var expectedOutputString = @"{}";
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-	[Fact]
-	public void Empty()
-	{
-		var inputString = @"";
-		var expectedOutputString = @"{}";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
-
-
-	[Fact]
-	public void Example()
-	{
-		var inputString = @"best-day-ever = 1987-07-05T17:45:00Z
+		[Fact]
+		public void Example()
+		{
+			var inputString = @"best-day-ever = 1987-07-05T17:45:00Z
 
 [numtheory]
 boring = false
 perfection = [6, 28, 496]";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
   ""best-day-ever"": {""type"": ""datetime"", ""value"": ""1987-07-05T17:45:00Z""},
   ""numtheory"": {
     ""boring"": {""type"": ""bool"", ""value"": ""false""},
@@ -257,36 +250,34 @@ perfection = [6, 28, 496]";
     }
   }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void Float()
-	{
-		var inputString = @"pi = 3.14
+		[Fact]
+		public void Float()
+		{
+			var inputString = @"pi = 3.14
 negpi = -3.14";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""pi"": {""type"": ""float"", ""value"": ""3.14""},
     ""negpi"": {""type"": ""float"", ""value"": ""-3.14""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void ImplicitAndExplicitAfter()
-	{
-		var inputString = @"[a.b.c]
+		[Fact]
+		public void ImplicitAndExplicitAfter()
+		{
+			var inputString = @"[a.b.c]
 answer = 42
 
 [a]
 better = 43";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""a"": {
         ""better"": {""type"": ""integer"", ""value"": ""43""},
         ""b"": {
@@ -296,21 +287,20 @@ better = 43";
         }
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void ImplicitAndExplicitBefore()
-	{
-		var inputString = @"[a]
+		[Fact]
+		public void ImplicitAndExplicitBefore()
+		{
+			var inputString = @"[a]
 better = 43
 
 [a.b.c]
 answer = 42";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""a"": {
         ""better"": {""type"": ""integer"", ""value"": ""43""},
         ""b"": {
@@ -320,18 +310,17 @@ answer = 42";
         }
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void ImplicitGroups()
-	{
-		var inputString = @"[a.b.c]
+		[Fact]
+		public void ImplicitGroups()
+		{
+			var inputString = @"[a.b.c]
 answer = 42";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""a"": {
         ""b"": {
             ""c"": {
@@ -340,102 +329,95 @@ answer = 42";
         }
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void Integer()
-	{
-		var inputString = @"answer = 42
+		[Fact]
+		public void Integer()
+		{
+			var inputString = @"answer = 42
 neganswer = -42";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""answer"": {""type"": ""integer"", ""value"": ""42""},
     ""neganswer"": {""type"": ""integer"", ""value"": ""-42""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void KeyEqualsNospace()
-	{
-		var inputString = @"answer=42";
-		var expectedOutputString = @"{
+		[Fact]
+		public void KeyEqualsNospace()
+		{
+			var inputString = @"answer=42";
+			var expectedOutputString = @"{
     ""answer"": {""type"": ""integer"", ""value"": ""42""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void KeySpace()
-	{
-		var inputString = @"""a b"" = 1";
-		var expectedOutputString = @"{
+		[Fact]
+		public void KeySpace()
+		{
+			var inputString = @"""a b"" = 1";
+			var expectedOutputString = @"{
     ""a b"": {""type"": ""integer"", ""value"": ""1""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void KeySpecialChars()
-	{
-		var inputString = @"""~!@$^&*()_+-`1234567890[]|/?><.,;:'"" = 1";
-		var expectedOutputString = @"{
+		[Fact]
+		public void KeySpecialChars()
+		{
+			var inputString = @"""~!@$^&*()_+-`1234567890[]|/?><.,;:'"" = 1";
+			var expectedOutputString = @"{
     ""~!@$^&*()_+-`1234567890[]|/?><.,;:'"": {
         ""type"": ""integer"", ""value"": ""1""
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void LongFloat()
-	{
-		var inputString = @"longpi = 3.141592653589793
+		[Fact]
+		public void LongFloat()
+		{
+			var inputString = @"longpi = 3.141592653589793
 neglongpi = -3.141592653589793";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""longpi"": {""type"": ""float"", ""value"": ""3.141592653589793""},
     ""neglongpi"": {""type"": ""float"", ""value"": ""-3.141592653589793""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void LongInteger()
-	{
-		var inputString = @"answer = 9223372036854775807
+		[Fact]
+		public void LongInteger()
+		{
+			var inputString = @"answer = 9223372036854775807
 neganswer = -9223372036854775808";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""answer"": {""type"": ""integer"", ""value"": ""9223372036854775807""},
     ""neganswer"": {""type"": ""integer"", ""value"": ""-9223372036854775808""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void MultilineString()
-	{
-		var inputString = @"multiline_empty_one = """"""""""""
+		[Fact]
+		public void MultilineString()
+		{
+			var inputString = @"multiline_empty_one = """"""""""""
 multiline_empty_two = """"""
 """"""
 multiline_empty_three = """"""\
@@ -458,7 +440,7 @@ equivalent_three = """"""\
        fox jumps over \
        the lazy dog.\
        """"""";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""multiline_empty_one"": {
         ""type"": ""string"",
         ""value"": """"
@@ -488,16 +470,15 @@ equivalent_three = """"""\
         ""value"": ""The quick brown fox jumps over the lazy dog.""
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void RawMultilineString()
-	{
-		var inputString = @"oneline = '''This string has a ' quote character.'''
+		[Fact]
+		public void RawMultilineString()
+		{
+			var inputString = @"oneline = '''This string has a ' quote character.'''
 firstnl = '''
 This string has a ' quote character.'''
 multiline = '''
@@ -506,7 +487,7 @@ has ' a quote character
 and more than
 one newline
 in it.'''";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""oneline"": {
         ""type"": ""string"",
         ""value"": ""This string has a ' quote character.""
@@ -520,23 +501,22 @@ in it.'''";
         ""value"": ""This string\nhas ' a quote character\nand more than\none newline\nin it.""
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void RawString()
-	{
-		var inputString = @"backspace = 'This string has a \b backspace character.'
+		[Fact]
+		public void RawString()
+		{
+			var inputString = @"backspace = 'This string has a \b backspace character.'
 tab = 'This string has a \t tab character.'
 newline = 'This string has a \n new line character.'
 formfeed = 'This string has a \f form feed character.'
 carriage = 'This string has a \r carriage return character.'
 slash = 'This string has a \/ slash character.'
 backslash = 'This string has a \\ backslash character.'";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""backspace"": {
         ""type"": ""string"",
         ""value"": ""This string has a \\b backspace character.""
@@ -566,32 +546,30 @@ backslash = 'This string has a \\ backslash character.'";
         ""value"": ""This string has a \\\\ backslash character.""
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void StringEmpty()
-	{
-		var inputString = @"answer = """"";
-		var expectedOutputString = @"{
+		[Fact]
+		public void StringEmpty()
+		{
+			var inputString = @"answer = """"";
+			var expectedOutputString = @"{
     ""answer"": {
         ""type"": ""string"",
         ""value"": """"
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void StringEscapes()
-	{
-		var inputString = @"backspace = ""This string has a \b backspace character.""
+		[Fact]
+		public void StringEscapes()
+		{
+			var inputString = @"backspace = ""This string has a \b backspace character.""
 tab = ""This string has a \t tab character.""
 newline = ""This string has a \n new line character.""
 formfeed = ""This string has a \f form feed character.""
@@ -602,7 +580,7 @@ notunicode1 = ""This string does not have a unicode \\u escape.""
 notunicode2 = ""This string does not have a unicode \u005Cu escape.""
 notunicode3 = ""This string does not have a unicode \\u0075 escape.""
 notunicode4 = ""This string does not have a unicode \\\u0075 escape.""";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""backspace"": {
         ""type"": ""string"",
         ""value"": ""This string has a \u0008 backspace character.""
@@ -648,68 +626,64 @@ notunicode4 = ""This string does not have a unicode \\\u0075 escape.""";
         ""value"": ""This string does not have a unicode \\\u0075 escape.""
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void StringSimple()
-	{
-		var inputString = @"answer = ""You are not drinking enough whisky.""";
-		var expectedOutputString = @"{
+		[Fact]
+		public void StringSimple()
+		{
+			var inputString = @"answer = ""You are not drinking enough whisky.""";
+			var expectedOutputString = @"{
     ""answer"": {
         ""type"": ""string"",
         ""value"": ""You are not drinking enough whisky.""
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void StringWithPound()
-	{
-		var inputString = @"pound = ""We see no # comments here.""
+		[Fact]
+		public void StringWithPound()
+		{
+			var inputString = @"pound = ""We see no # comments here.""
 poundcomment = ""But there are # some comments here."" # Did I # mess you up?";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""pound"": {""type"": ""string"", ""value"": ""We see no # comments here.""},
     ""poundcomment"": {
         ""type"": ""string"",
         ""value"": ""But there are # some comments here.""
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void TableArrayImplicit()
-	{
-		var inputString = @"[[albums.songs]]
+		[Fact]
+		public void TableArrayImplicit()
+		{
+			var inputString = @"[[albums.songs]]
 name = ""Glory Days""";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""albums"": {
        ""songs"": [
            {""name"": {""type"": ""string"", ""value"": ""Glory Days""}}
        ]
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void TableArrayMany()
-	{
-		var inputString = @"[[people]]
+		[Fact]
+		public void TableArrayMany()
+		{
+			var inputString = @"[[people]]
 first_name = ""Bruce""
 last_name = ""Springsteen""
 
@@ -720,7 +694,7 @@ last_name = ""Clapton""
 [[people]]
 first_name = ""Bob""
 last_name = ""Seger""";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""people"": [
         {
             ""first_name"": {""type"": ""string"", ""value"": ""Bruce""},
@@ -736,16 +710,15 @@ last_name = ""Seger""";
         }
     ]
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void TableArrayNest()
-	{
-		var inputString = @"[[albums]]
+		[Fact]
+		public void TableArrayNest()
+		{
+			var inputString = @"[[albums]]
 name = ""Born to Run""
 
   [[albums.songs]]
@@ -762,7 +735,7 @@ name = ""Born in the USA""
 
   [[albums.songs]]
   name = ""Dancing in the Dark""";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""albums"": [
         {
             ""name"": {""type"": ""string"", ""value"": ""Born to Run""},
@@ -780,19 +753,18 @@ name = ""Born in the USA""
         }
     ]
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void TableArrayOne()
-	{
-		var inputString = @"[[people]]
+		[Fact]
+		public void TableArrayOne()
+		{
+			var inputString = @"[[people]]
 first_name = ""Bruce""
 last_name = ""Springsteen""";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""people"": [
         {
             ""first_name"": {""type"": ""string"", ""value"": ""Bruce""},
@@ -800,92 +772,88 @@ last_name = ""Springsteen""";
         }
     ]
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void TableEmpty()
-	{
-		var inputString = @"[a]";
-		var expectedOutputString = @"{
+		[Fact]
+		public void TableEmpty()
+		{
+			var inputString = @"[a]";
+			var expectedOutputString = @"{
     ""a"": {}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void TableSubEmpty()
-	{
-		var inputString = @"[a]
+		[Fact]
+		public void TableSubEmpty()
+		{
+			var inputString = @"[a]
 [a.b]";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""a"": { ""b"": {} }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void TableWhitespace()
-	{
-		var inputString = @"[""valid key""]";
-		var expectedOutputString = @"{
+		[Fact]
+		public void TableWhitespace()
+		{
+			var inputString = @"[""valid key""]";
+			var expectedOutputString = @"{
     ""valid key"": {}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void TableWithPound()
-	{
-		var inputString = @"[""key#group""]
+		[Fact]
+		public void TableWithPound()
+		{
+			var inputString = @"[""key#group""]
 answer = 42";
-		var expectedOutputString = @"{
+			var expectedOutputString = @"{
     ""key#group"": {
         ""answer"": {""type"": ""integer"", ""value"": ""42""}
     }
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void UnicodeEscape()
-	{
-		var inputString = @"answer = ""\u03B4""";
-		var expectedOutputString = @"{
-    ""answer"": {""type"": ""string"", ""value"": ""\u03B4""}
+		[Fact]
+		public void UnicodeEscape()
+		{
+			var inputString = @"answer4 = ""\u03B4""
+answer8 = ""\U000003B4""";
+			var expectedOutputString = @"{
+    ""answer4"": {""type"": ""string"", ""value"": ""\u03B4""},
+    ""answer8"": {""type"": ""string"", ""value"": ""\u03B4""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 
-
-	[Fact]
-	public void UnicodeLiteral()
-	{
-		var inputString = @"answer = ""δ""";
-		var expectedOutputString = @"{
+		[Fact]
+		public void UnicodeLiteral()
+		{
+			var inputString = @"answer = ""δ""";
+			var expectedOutputString = @"{
     ""answer"": {""type"": ""string"", ""value"": ""δ""}
 }";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
+
 	}
-
-
 }

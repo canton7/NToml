@@ -10,14 +10,14 @@ var testsDirectory = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), "tom
 var files = Directory.GetFiles(testsDirectory,  "*.toml");
 var testInfo = files.Select(file =>
 {
-	var fileName = Path.GetFileNameWithoutExtension(file);
-	var outputFileName = Path.Combine(testsDirectory, Path.ChangeExtension(fileName, "json"));
-	return new
-	{
-		TestName = Regex.Replace(fileName, "(?:^|-)(.)", match => match.Groups[1].Value.ToUpper()),
-		Input = File.ReadAllText(file, Encoding.UTF8).TrimEnd('\r', '\n').Replace("\"", "\"\""),
-		ExpectedOutput = File.ReadAllText(outputFileName, Encoding.UTF8).TrimEnd('\r', '\n').Replace("\"", "\"\""),
-	};
+    var fileName = Path.GetFileNameWithoutExtension(file);
+    var outputFileName = Path.Combine(testsDirectory, Path.ChangeExtension(fileName, "json"));
+    return new
+    {
+        TestName = Regex.Replace(fileName, "(?:^|-)(.)", match => match.Groups[1].Value.ToUpper()),
+        Input = File.ReadAllText(file, Encoding.UTF8).TrimEnd('\r', '\n').Replace("\"", "\"\""),
+        ExpectedOutput = File.ReadAllText(outputFileName, Encoding.UTF8).TrimEnd('\r', '\n').Replace("\"", "\"\""),
+    };
 }).ToArray();
 #>
 using Xunit;
@@ -25,24 +25,26 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using NTomlUnitTests;
 
-public class ValidParsingTests
+namespace NTomlUnitTests
 {
-<#
-	foreach (var test in testInfo)
+	public class ValidParsingTests
 	{
+<#
+		foreach (var test in testInfo)
+		{
 
 #>
-	[Fact]
-	public void <#= test.TestName #>()
-	{
-		var inputString = @"<#= test.Input #>";
-		var expectedOutputString = @"<#= test.ExpectedOutput #>";
-		var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
-		var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
-		AssertHelpers.ObjectsEqual(expectedOutput, output);
-	}
-
+		[Fact]
+		public void <#= test.TestName #>()
+		{
+			var inputString = @"<#= test.Input #>";
+			var expectedOutputString = @"<#= test.ExpectedOutput #>";
+			var output = (Dictionary<string, object>)TestDeserializer.Deserialize(inputString);
+			var expectedOutput = (Dictionary<string, object>)JsonHelper.Deserialize(expectedOutputString);
+			AssertHelpers.ObjectsEqual(expectedOutput, output);
+		}
 <#
-	}
+		}
 #>
+	}
 }

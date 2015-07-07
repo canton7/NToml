@@ -10,12 +10,12 @@ var testsDirectory = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), "tom
 var files = Directory.GetFiles(testsDirectory,  "*.toml");
 var testInfo = files.Select(file =>
 {
-	var fileName = Path.GetFileNameWithoutExtension(file);
-	return new
-	{
-		TestName = Regex.Replace(fileName, "(?:^|-)(.)", match => match.Groups[1].Value.ToUpper()),
-		Input = File.ReadAllText(file, Encoding.UTF8).TrimEnd('\r', '\n').Replace("\"", "\"\""),
-	};
+    var fileName = Path.GetFileNameWithoutExtension(file);
+    return new
+    {
+        TestName = Regex.Replace(fileName, "(?:^|-)(.)", match => match.Groups[1].Value.ToUpper()),
+        Input = File.ReadAllText(file, Encoding.UTF8).TrimEnd('\r', '\n').Replace("\"", "\"\""),
+    };
 }).ToArray();
 #>
 using Xunit;
@@ -23,21 +23,24 @@ using System;
 using NTomlUnitTests;
 using NToml;
 
-public class InvalidValidParsingTests
+namespace NTomlUnitTests
 {
+    public class InvalidValidParsingTests
+    {
 <#
-	foreach (var test in testInfo)
-	{
+        foreach (var test in testInfo)
+        {
 
 #>
-	[Fact]
-	public void <#= test.TestName #>()
-	{
-		var inputString = @"<#= test.Input #>";
-		AssertHelpers.ThrowsDerived<ParseException>(() => TestDeserializer.Deserialize(inputString));
-	}
+        [Fact]
+        public void <#= test.TestName #>()
+        {
+            var inputString = @"<#= test.Input #>";
+            AssertHelpers.ThrowsDerived<ParseException>(() => TestDeserializer.Deserialize(inputString));
+        }
 
 <#
-	}
+        }
 #>
+    }
 }

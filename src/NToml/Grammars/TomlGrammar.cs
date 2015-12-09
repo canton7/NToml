@@ -16,7 +16,9 @@ namespace NToml.Grammars
         static readonly Parser<char> WhitespaceOrNewline = Whitespace.Or(Newline).Named("whitespace or newline");
         static readonly Parser<char> Backslash = Parse.Char('\\');
         static readonly Parser<char> BasicStringDelimeter = Parse.Char('"');
+        static readonly Parser<string> MultilineBasicStringDelimeter = Parse.String("\"\"\"").Text();
         static readonly Parser<char> LiteralStringDelimeter = Parse.Char('\'');
+        static readonly Parser<string> MultilineLiteralStringDelimeter = Parse.String("'''").Text();
 
         static readonly Parser<char> Escape = Parse.Char('\\');
         static Parser<T> Escaped<T>(Parser<T> following)
@@ -57,7 +59,7 @@ namespace NToml.Grammars
         static readonly Parser<char> EscapedCarriageReturn = Escaped(Parse.Char('r')).Return('\r');
         static readonly Parser<char> EscapedQuote = Escaped(BasicStringDelimeter).Return('"');
         static readonly Parser<char> EscapedBackslash = Escaped(Parse.Char('\\')).Return('\\');
-        static readonly Parser<char> HexChars = Parse.Chars("0123456789abcdefABCDEF");
+        static readonly Parser<char> HexChars = Parse.Chars("0123456789abcdefABCDEF").Named("hex character");
         static readonly Parser<char> ShortUnicode =
             from u in Escaped(Parse.Char('u'))
             from rest in HexChars.Repeat(4).Text()
@@ -83,8 +85,6 @@ namespace NToml.Grammars
             from close in BasicStringDelimeter
             select content;
 
-        static readonly Parser<string> MultilineBasicStringDelimeter =
-            BasicStringDelimeter.Repeat(3).Text();
         static readonly Parser<IEnumerable<char>> MultilineBasicStringNewlineEscape =
             from backslash in Parse.Char('\\')
             // Force a newline in there - otherwise 'a \ b' is allowed
@@ -112,7 +112,6 @@ namespace NToml.Grammars
             from close in LiteralStringDelimeter
             select content;
 
-        static readonly Parser<string> MultilineLiteralStringDelimeter = LiteralStringDelimeter.Repeat(3).Text();
         // Try and match newline first, as it gets normalized to \n
         static readonly Parser<char> MultilineLiteralStringContent = Newline.Or(Parse.AnyChar.Except(MultilineLiteralStringDelimeter));
         static readonly Parser<string> MultilineLiteralString =
@@ -123,10 +122,10 @@ namespace NToml.Grammars
             select content;
 
         static readonly Parser<IntegerValue> Integer =
-            from sign in Parse.Chars("+-").Optional()
+            (from sign in Parse.Chars("+-").Optional()
             from leading in Parse.Digit.Except(Parse.Char('0'))
             from rest in Parse.Digit.Many().Text()
-            select new IntegerValue(Int64.Parse(String.Format("{0}{1}{2}", sign.GetOrElse('0'), leading, rest)));
+            select new IntegerValue(Int64.Parse(String.Format("{0}{1}{2}", sign.GetOrElse('0'), leading, rest)))).Named("integer");
 
         static readonly Parser<string> FloatIntegerPart =
             from sign in Parse.Chars("+-").Optional()
@@ -145,12 +144,15 @@ namespace NToml.Grammars
             select "E" + sign.GetOrElse('+') + rest;
 
         static readonly Parser<FloatValue> Float =
-            from integer in FloatIntegerPart
+            (from integer in FloatIntegerPart
             from rest in FloatFractionalPart.Or(FloatExponentialPart).Or(FloatFractionalPart.Then(frac => FloatExponentialPart.Select(exp => frac + exp)))
-            select new FloatValue(Double.Parse(integer + rest));
+            select new FloatValue(Double.Parse(integer + rest))).Named("float");
+
+        static readonly Parser<IValue> NumericValue =
+            Integer.Or<IValue>(Float);
 
         static readonly Parser<BooleanValue> Boolean =
-            Parse.String("true").Return(true).Or(Parse.String("false").Return(false)).Select(x => new BooleanValue(x));
+            (Parse.String("true").Return(true).Or(Parse.String("false").Return(false)).Select(x => new BooleanValue(x))).Named("boolean (true or false)");
 
         static readonly Parser<char> BareKeyChars = Parse.Chars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-").Named("a-zA-Z_-");
         static readonly Parser<string> BareKey = BareKeyChars.AtLeastOnce().Text();
@@ -163,13 +165,13 @@ namespace NToml.Grammars
             MultilineBasicString.Or(SingleLineBasicString).Or(MultilineLiteralString).Or(SingleLineLiteralString).Select(x => new StringValue(x));
 
         static readonly Parser<DateTimeValue> DateTime =
-            Rfc3339Grammar.Rfc3339.Select(x => new DateTimeValue(x));
+            Rfc3339Grammar.Rfc3339.Select(x => new DateTimeValue(x)).Named("datetime");
 
         static readonly Parser<char> CommentChar = Parse.Char('#');
         static readonly Parser<string> Comment =
             (from open in TokenizeBefore(CommentChar, Whitespace)
-            from rest in Parse.AnyChar.Except(Newline).Many().Text()
-            select rest).Named("comment");
+             from rest in Parse.AnyChar.Except(Newline).Many().Text()
+             select rest).Named("comment");
 
         static Parser<ArrayValue<T>> ArrayOf<T>(Parser<T> elementType) where T : IValue
         {
@@ -199,6 +201,13 @@ namespace NToml.Grammars
             ArrayOf(DateTime).Or<IValue>(ArrayOf(Integer)).Or(ArrayOf(Float)).Or(ArrayOf(Boolean))
             .Or(ArrayOf(StringValue)).Or(ArrayOf(Parse.Ref(() => ArrayValue)));
 
+        static readonly Parser<IValue> InlineTableValue =
+            from open in Parse.Char('{')
+            from content in KeyValuePair.XDelimitedBy(Parse.Char(',')).Optional()
+            from close in Tokenize(Parse.Char('}'), Whitespace)
+            from comment in Comment.Optional()
+            select new TableValue(null, content.GetOrElse(Enumerable.Empty<KeyValuePair>()));
+
         static readonly Parser<IEnumerable<string>> TableName =
             from open in Tokenize(Parse.Char('['), Whitespace)
             from content in Key.DelimitedBy(Tokenize(Parse.Char('.'), Whitespace))
@@ -212,7 +221,7 @@ namespace NToml.Grammars
             select content;
 
         static readonly Parser<IValue> TableValue =
-            from value in DateTime.Or<IValue>(Float).Or(Integer).Or(Boolean).Or(StringValue).Or(ArrayValue)
+            from value in DateTime.XOr<IValue>(NumericValue).XOr(Boolean).XOr(StringValue).XOr(ArrayValue).XOr(InlineTableValue)
             from trailingWhitespace in Whitespace.Many()
             from rest in Comment.Optional()
             select value;
@@ -221,18 +230,22 @@ namespace NToml.Grammars
             from key in TokenizeBefore(BareKey.Or(QuotedKey), Whitespace)
             from eq in Tokenize(Parse.Char('='), Whitespace)
             from value in TableValue
-            from comment in Comment.Optional()
             select new KeyValuePair(key, value);
+
+        static readonly Parser<KeyValuePair> KeyValuePairWithComment =
+            from keyValuePair in KeyValuePair
+            from comment in Comment.Optional()
+            select keyValuePair;
 
         static readonly Parser<string> TableLineTerminator =
             Parse.Return("").End().XOr(Newline.Once().Text().End()).Or(Newline.Once().Text());
 
         static readonly Parser<KeyValuePair> TableLine =
-            from item in KeyValuePair.Or(Comment.Select(_ => (KeyValuePair)null)).Or(Whitespace.Many().Select(_ => (KeyValuePair)null))
+            from item in KeyValuePairWithComment.XOr(Comment.Select(_ => (KeyValuePair)null)).XOr(Whitespace.Many().Select(_ => (KeyValuePair)null))
             from newline in TableLineTerminator
             select item;
 
-        static readonly Parser<IEnumerable<KeyValuePair>> TableLines = TableLine.Many().Select(x => x.Where(line => line != null));
+        static readonly Parser<IEnumerable<KeyValuePair>> TableLines = TableLine.AtLeastOnce().Select(x => x.Where(line => line != null));
 
         static readonly Parser<Table> Table =
             from name in TableName
@@ -242,8 +255,8 @@ namespace NToml.Grammars
                 from newline in Newline
                 from lines in TableLines
                 select lines
-            ).Optional()
-            select new Table(name.ToArray(), lines.GetOrElse(Enumerable.Empty<KeyValuePair>()), false);
+            )
+            select new Table(name.ToArray(), lines, false);
 
         static readonly Parser<Table> ArrayTable =
             from name in ArrayTableName
@@ -252,14 +265,14 @@ namespace NToml.Grammars
             from lines in TableLines
             select new Table(name.ToArray(), lines, true);
 
-        static readonly Parser<Table> AnyTable = Table.Or(ArrayTable);
+        static readonly Parser<Table> AnyTable = Table.XOr(ArrayTable);
 
         static readonly Parser<Table> FirstTable =
-            TableLine.AtLeastOnce().Select(x => new Table(new string[0], x.Where(line => line != null), false));
+            TableLine.XAtLeastOnce().Select(x => new Table(new string[0], x.Where(line => line != null), false));
 
         public static readonly Parser<IEnumerable<Table>> Document =
-            from firstTable in FirstTable.Optional()
+            from firstTable in FirstTable.XOr(AnyTable)
             from rest in AnyTable.XMany().End()
-            select new[] { firstTable.GetOrDefault() ?? new Table(new string[0], Enumerable.Empty<KeyValuePair>(), false) }.Concat(rest);
+            select new[] { firstTable }.Concat(rest);
     }
 }
